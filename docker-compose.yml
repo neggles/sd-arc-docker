@@ -1,0 +1,56 @@
+version: "3.7"
+services:
+  pytorch:
+    container_name: pytorch
+    image: neggles/intel-optimized-pytorch:latest
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: pytorch
+      tags:
+        - neggles/intel-optimized-pytorch:latest
+        - neggles/intel-optimized-pytorch:gpu
+        - neggles/intel-optimized-pytorch:1.13.0a0
+      args:
+        - IPEX_WHEEL_URL=https://vault.neggl.es/pub/ipex/xpu
+        - USERNAME=${USER}
+
+    # enable interactive mode
+    stdin_open: true
+    tty: true
+    command: ["/bin/bash", "-l"]
+    user: ${USER}:${USER}
+
+    privileged: true
+    network_mode: host
+    ipc: host
+    security_opt:
+      - seccomp:unconfined
+    cap_add:
+      - SYS_PTRACE
+    group_add:
+      - video
+      - render
+
+    # mount the GPU
+    devices:
+      - "/dev/dri:/dev/dri"
+    # mount gpu sublinks and data dirs
+    working_dir: /workspace
+    volumes:
+      - type: bind
+        source: /dev/dri/by-path
+        target: /dev/dri/by-path
+    # mount the host's X11 socket
+      - type: bind
+        source: /tmp/.X11-unix
+        target: /tmp/.X11-unix
+    # mount the user's home directory
+      # - type: bind
+      #   source: /home/$USER
+      #   target: /home/$USER
+    # and mount the workspace dir
+      - type: bind
+        source: ./stable-diffusion-webui
+        target: /workspace
