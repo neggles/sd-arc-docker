@@ -63,9 +63,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
         libglib2.0-0 \
         libjpeg-dev \
         libjpeg-turbo8-dev \
-        libjpeg62-dev \
         libjpeg8-dev \
-        libjpeg9-dev \
         libjsoncpp25 \
         libncurses5 \
         libncursesw5 \
