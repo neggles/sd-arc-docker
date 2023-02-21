@@ -10,7 +10,6 @@ services:
       target: pytorch
       tags:
         - neggles/intel-optimized-pytorch:latest
-        - neggles/intel-optimized-pytorch:gpu
         - neggles/intel-optimized-pytorch:1.13.0a0
       args:
         - IPEX_WHEEL_URL=https://vault.neggl.es/pub/ipex/xpu
@@ -50,7 +49,11 @@ services:
       # - type: bind
       #   source: /home/$USER
       #   target: /home/$USER
-    # and mount the workspace dir
+    # and mount the workspace dir / webui dir
       - type: bind
-        source: ./stable-diffusion-webui
+        source: ./workspace
         target: /workspace
+      - type: bind
+        source: ./sd-webui-arc
+        target: /workspace/stable-diffusion-webui
+

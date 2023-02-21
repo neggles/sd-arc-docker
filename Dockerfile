@@ -60,7 +60,17 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
         libvpl2 \
         libxatracker2 \
         libarchive13 \
+        libglib2.0-0 \
+        libjpeg-dev \
+        libjpeg-turbo8-dev \
+        libjpeg62-dev \
+        libjpeg8-dev \
+        libjpeg9-dev \
         libjsoncpp25 \
+        libncurses5 \
+        libncursesw5 \
+        libpng-dev \
+        libjpeg-dev \
         librhash0 \
         libssl-dev \
         libuv1 \
@@ -68,6 +78,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
         mesa-va-drivers \
         mesa-vdpau-drivers \
         mesa-vulkan-drivers \
+        nano \
         va-driver-all \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
@@ -83,6 +94,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     apt-get -y update && apt-get -y install --no-install-recommends \
         intel-oneapi-runtime-dpcpp-cpp \
         intel-oneapi-runtime-mkl \
+        intel-basekit-runtime \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -95,10 +107,20 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
         python3-setuptools \
         python3-wheel \
         python3-dev \
+        python3-venv \
         python3-virtualenv \
         python-is-python3 \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
+
+ARG PIP_PREFER_BINARY=1
+ARG PY_VERSION=3.10
+
+# do some linking of python things
+RUN ln -sf /usr/bin/python${PY_VERSION} /usr/local/bin/python \
+    && ln -sf /usr/bin/python${PY_VERSION} /usr/local/bin/python3 \
+    && ln -sf /usr/bin/python${PY_VERSION} /usr/bin/python \
+    && ln -sf /usr/bin/python${PY_VERSION} /usr/bin/python3
 
 # python base deps
 RUN --mount=type=cache,target=/root/.cache/pip \
@@ -115,18 +137,11 @@ ARG TORCHVISION_VERSION=0.14.1a0+0504df5
 ARG IPEX_VERSION=1.13.10+xpu
 ARG IPEX_WHEEL_URL=https://developer.intel.com/ipex-whl-stable-xpu
 
-# do some linking
-RUN ln -sf /usr/bin/python3.10 /usr/local/bin/python \
-    && ln -sf /usr/bin/python3.10 /usr/local/bin/python3 \
-    && ln -sf /usr/bin/python3.10 /usr/bin/python \
-    && ln -sf /usr/bin/python3.10 /usr/bin/python3
-
 # intel extension for pytorch
 RUN --mount=type=cache,target=/root/.cache/pip \
-    python3 -m pip install -f ${IPEX_WHEEL_URL} \
-        torch==${TORCH_VERSION} \
-        torchvision==${TORCHVISION_VERSION} \
-        intel-extension-for-pytorch==${IPEX_VERSION} \
+    python3 -m pip install -f ${IPEX_WHEEL_URL} torch==${TORCH_VERSION} \
+    && python3 -m pip install -f ${IPEX_WHEEL_URL} intel-extension-for-pytorch==${IPEX_VERSION} \
+    && python3 -m pip install -f ${IPEX_WHEEL_URL} torchvision==${TORCHVISION_VERSION} \
     && rm -rf /tmp/wheels
 
 WORKDIR /workspace

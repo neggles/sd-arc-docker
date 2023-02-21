@@ -1,0 +1,11 @@
+/.devcontainer
+/.vscode
+/.vscode-*
+
+/stable-diffusion-webui
+/sd-webui-arc
+/wheels
+
+/workspace
+/data
+/output
