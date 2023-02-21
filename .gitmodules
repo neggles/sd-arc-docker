@@ -1,0 +1,3 @@
+[submodule "sd-webui-arc"]
+	path = sd-webui-arc
+	url = https://github.com/neggles/sd-webui-arc.git
