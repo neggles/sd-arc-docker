@@ -53,6 +53,8 @@ services:
       - type: bind
         source: ./workspace
         target: /workspace
+        bind:
+          create_host_path: true
       - type: bind
         source: ./sd-webui-arc
         target: /workspace/stable-diffusion-webui

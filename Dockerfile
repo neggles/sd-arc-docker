@@ -7,7 +7,8 @@ ENV LANG=C.UTF-8
 HEALTHCHECK NONE
 
 # turn off apt cache cleaning
-RUN rm -f /etc/apt/apt.conf.d/docker-clean; echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
+RUN rm -f /etc/apt/apt.conf.d/docker-clean \
+    && echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
 
 # install base packages
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
